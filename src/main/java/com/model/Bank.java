@@ -7,6 +7,7 @@ public class Bank {
 
     private final String type;
     private final int value;
+    private int amount;
 
     public Bank(String type, int value){
         this.type = type;
@@ -19,6 +20,14 @@ public class Bank {
 
     public int getValue(){
         return this.value;
+    }
+
+    public void setAmount(int amount){
+        this.amount = amount;
+    }
+
+    public int getAmount(){
+        return  this.amount;
     }
 
 }
