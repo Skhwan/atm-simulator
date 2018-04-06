@@ -21,12 +21,10 @@ import java.util.List;
 @Controller
 public class BankCalculator {
 
-    private static final Logger logger = LoggerFactory.getLogger(BankCalculator.class);
+    private final Logger logger = LoggerFactory.getLogger(BankCalculator.class);
 
     @Autowired
     DatabaseManager databaseManager;
-
-    private final int[] bankValues = {1000, 500, 100, 50, 20};
 
     public ResponseEntity<ResponseWrapper> calculateBank(int amount){
         String responseCode;
@@ -35,11 +33,12 @@ public class BankCalculator {
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try {
             int[] bankAmounts = databaseManager.getBankAmount();
+            int[] bankValues = databaseManager.getBankValues();
 
             BankValidator.validateAmount(amount);
             BankValidator.validateRemainingBalance(amount, bankAmounts, bankValues);
 
-            List<int[]> bankList = findBanks(amount, new int[bankAmounts.length], bankAmounts, 0);
+            List<int[]> bankList = findBanks(amount, new int[bankAmounts.length], bankAmounts, bankValues, 0);
             int[] selectedBankList = BankValidator.validateRemainingNote(bankAmounts, bankList);
             int[] updatedBankList = subtractBankAmt(bankAmounts, selectedBankList);
             databaseManager.updateBalanceAmt(updatedBankList, bankValues);
@@ -63,15 +62,15 @@ public class BankCalculator {
         return response;
     }
 
-    private List<int[]> findBanks(int amount, int[] currentBankAmt, int[] balanceBankAmt, int position){
+    public List<int[]> findBanks(int amount, int[] currentBankAmt, int[] balanceBankAmt, int[] bankValues, int position){
         List<int[]> bankCombination = new ArrayList<>();
-        int totalAmt = calCurrentTotalAmt(currentBankAmt);
+        int totalAmt = calCurrentTotalAmt(currentBankAmt, bankValues);
         if (totalAmt < amount) {
             for (int i = position; i < currentBankAmt.length; i++) {
                 if (balanceBankAmt[i] > currentBankAmt[i]) {
                     int newCurrentBankAmt[] = currentBankAmt.clone();
                     newCurrentBankAmt[i]++;
-                    List<int[]> resultList = findBanks(amount, newCurrentBankAmt, balanceBankAmt, i);
+                    List<int[]> resultList = findBanks(amount, newCurrentBankAmt, balanceBankAmt, bankValues, i);
                     if (resultList!=null) {
                         bankCombination.addAll(resultList);
                     }
@@ -83,14 +82,14 @@ public class BankCalculator {
         return bankCombination;
     }
 
-    private int[] subtractBankAmt(int[] balanceBanks, int[] banks){
+    public int[] subtractBankAmt(int[] balanceBanks, int[] banks){
         for (int i = 0; i < banks.length; i++){
             balanceBanks[i] -= banks[i];
         }
         return balanceBanks;
     }
 
-    private int calCurrentTotalAmt(int[] bankAmounts){
+    public int calCurrentTotalAmt(int[] bankAmounts, int[] bankValues){
         int totalAmt = 0;
         for (int i = 0; i< bankAmounts.length; i++){
             totalAmt += bankAmounts[i]*bankValues[i];
