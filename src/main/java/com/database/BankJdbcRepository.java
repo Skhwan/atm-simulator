@@ -4,7 +4,6 @@ import com.model.Bank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,8 +32,6 @@ public class BankJdbcRepository {
 
     public int update(Bank bank, int amount) {
         return jdbcTemplate.update("update bank set amount = ? where type = ?",
-                new Object[] {
-                        amount, bank.getType()
-                });
+                amount, bank.getType());
     }
 }
