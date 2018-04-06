@@ -1,6 +1,7 @@
-package com.util;
+package com.model;
 
-import com.model.Bank;
+import com.util.BankMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 /**
  * Created by khwanchanok on 4/6/2018 AD.
  */
+@Service
 public class ResponseWrapper {
 
     private List<Bank> banks;
@@ -55,5 +57,15 @@ public class ResponseWrapper {
 
     public String getResponseStatus(){
         return responseStatus;
+    }
+
+    @Override
+    public String toString(){
+        return "ResponseWrapper:{" +
+                " resultCode=" + getResponseCode() +
+                " resultStatus=" + getResponseStatus() +
+                " resultDesc=" + getResponseDesc() +
+                " resultBody=" + getResponseBody() +
+                " }";
     }
 }

@@ -30,4 +30,12 @@ public class Bank {
         return  this.amount;
     }
 
+    @Override
+    public String toString(){
+        return "Bank{" +
+                " type=" + getType() +
+                " value=" + getValue() +
+                " amount=" + getAmount() +
+                " }";
+    }
 }

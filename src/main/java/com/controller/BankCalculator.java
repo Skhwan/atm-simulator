@@ -1,11 +1,15 @@
 package com.controller;
 
-import com.database.BankDao;
-import com.util.ResponseWrapper;
+import com.database.DatabaseManager;
+import com.model.ResponseWrapper;
 import com.util.Constant;
 import com.util.BankValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,21 +18,23 @@ import java.util.List;
  * Created by khwanchanok on 4/6/2018 AD.
  */
 
-@Component
+@Controller
 public class BankCalculator {
 
+    private static final Logger logger = LoggerFactory.getLogger(BankCalculator.class);
+
     @Autowired
-    BankDao bankDao;
+    DatabaseManager databaseManager;
 
     private final int[] bankValues = {1000, 500, 100, 50, 20};
 
-    public ResponseWrapper calculateBank(int amount){
+    public ResponseEntity<ResponseWrapper> calculateBank(int amount){
         String responseCode;
         String responseDesc;
         String responseStatus;
         ResponseWrapper responseWrapper = new ResponseWrapper();
         try {
-            int[] bankAmounts = bankDao.getBankAmount();
+            int[] bankAmounts = databaseManager.getBankAmount();
 
             BankValidator.validateAmount(amount);
             BankValidator.validateRemainingBalance(amount, bankAmounts, bankValues);
@@ -36,12 +42,13 @@ public class BankCalculator {
             List<int[]> bankList = findBanks(amount, new int[bankAmounts.length], bankAmounts, 0);
             int[] selectedBankList = BankValidator.validateRemainingNote(bankAmounts, bankList);
             int[] updatedBankList = subtractBankAmt(bankAmounts, selectedBankList);
-            bankDao.updateBalanceAmt(updatedBankList, bankValues);
+            databaseManager.updateBalanceAmt(updatedBankList, bankValues);
             responseWrapper.setResponseBody(selectedBankList, bankValues);
             responseCode = Constant.SUCCESS_CODE;
             responseDesc = Constant.SUCCESS;
             responseStatus = Constant.SUCCESS;
         } catch (Exception e){
+            logger.error("Got Exception while processing : {}", e.getMessage());
             responseCode = Constant.FAIL_CODE;
             responseDesc = e.getMessage();
             responseStatus = Constant.FAIL;
@@ -50,7 +57,10 @@ public class BankCalculator {
         responseWrapper.setResponseCode(responseCode);
         responseWrapper.setResponseDesc(responseDesc);
         responseWrapper.setResponseStatus(responseStatus);
-        return responseWrapper;
+
+        ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
+        logger.info("Response {}", response);
+        return response;
     }
 
     private List<int[]> findBanks(int amount, int[] currentBankAmt, int[] balanceBankAmt, int position){

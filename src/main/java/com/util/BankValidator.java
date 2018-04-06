@@ -24,7 +24,7 @@ public class BankValidator {
             totalAmt += bankValues[i]*bankAmount[i];
         }
         if (totalAmt < amount){
-            throw new InsufficientBalanceException("Remaining balance less than dispense amount");
+            throw new InsufficientBalanceException("Remaining balance less than dispensed amount");
         }
         return true;
     }
