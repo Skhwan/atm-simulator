@@ -19,9 +19,9 @@ import java.util.List;
  */
 
 @Controller
-public class BankCalculator {
+public class AtmController {
 
-    private final Logger logger = LoggerFactory.getLogger(BankCalculator.class);
+    private final Logger logger = LoggerFactory.getLogger(AtmController.class);
 
     @Autowired
     DatabaseManager databaseManager;
@@ -56,6 +56,22 @@ public class BankCalculator {
         responseWrapper.setResponseCode(responseCode);
         responseWrapper.setResponseDesc(responseDesc);
         responseWrapper.setResponseStatus(responseStatus);
+
+        ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
+        logger.info("Response {}", response);
+        return response;
+    }
+
+    public ResponseEntity<ResponseWrapper> checkBalance() {
+        int[] bankAmounts = databaseManager.getBankAmount();
+        int[] bankValues = databaseManager.getBankValues();
+
+        ResponseWrapper responseWrapper = new ResponseWrapper();
+
+        responseWrapper.setResponseBody(bankAmounts, bankValues);
+        responseWrapper.setResponseCode(Constant.SUCCESS_CODE);
+        responseWrapper.setResponseDesc(Constant.SUCCESS);
+        responseWrapper.setResponseStatus(Constant.SUCCESS);
 
         ResponseEntity<ResponseWrapper> response = new ResponseEntity<>(responseWrapper, HttpStatus.OK);
         logger.info("Response {}", response);

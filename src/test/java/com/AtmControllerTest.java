@@ -1,6 +1,6 @@
 package com;
 
-import com.controller.BankCalculator;
+import com.controller.AtmController;
 import com.database.DatabaseManager;
 import com.model.ResponseWrapper;
 import org.junit.Assert;
@@ -23,13 +23,13 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BankCalculatorTest {
+public class AtmControllerTest {
 
     @Mock
     DatabaseManager mockDatabaseManager;
 
     @InjectMocks
-    BankCalculator bankCalculator;
+    AtmController atmController;
 
     final int[] bankAmount = {5, 5, 5, 5, 5};
     final int[] bankValues = {1000, 500, 100, 50, 20};
@@ -47,7 +47,7 @@ public class BankCalculatorTest {
         int[] balanceBanks = {5, 5, 5, 5, 5};
         int[] remainingBanks = {3, 4, 5, 3, 1};
 
-        int[] result = bankCalculator.subtractBankAmt(balanceBanks, usedBanks);
+        int[] result = atmController.subtractBankAmt(balanceBanks, usedBanks);
 
         Assert.assertArrayEquals(remainingBanks, result);
     }
@@ -56,7 +56,7 @@ public class BankCalculatorTest {
     public void calculateTotalBalanceCorrectly(){
         int[] remainingBanks = {1, 1, 1, 1, 1};
         int expectedAmt = 1670;
-        int result = bankCalculator.calCurrentTotalAmt(remainingBanks, bankValues);
+        int result = atmController.calCurrentTotalAmt(remainingBanks, bankValues);
 
         Assert.assertEquals(expectedAmt, result);
     }
@@ -71,7 +71,7 @@ public class BankCalculatorTest {
         expectedResult.add(new int[]{0, 0, 0, 2, 4});
         expectedResult.add(new int[]{0, 0, 0, 0, 9});
 
-        List<int[]> result = bankCalculator.findBanks(180, currentBankAmt, balanceBankAmt, bankValues, 0);
+        List<int[]> result = atmController.findBanks(180, currentBankAmt, balanceBankAmt, bankValues, 0);
 
         Assert.assertEquals(expectedResult.size(), result.size());
 
@@ -86,7 +86,7 @@ public class BankCalculatorTest {
         String expectedResultCode = "0";
         String expectedResultDesc = "SUCCESS";
 
-        ResponseEntity<ResponseWrapper> response = bankCalculator.calculateBank(180);
+        ResponseEntity<ResponseWrapper> response = atmController.calculateBank(180);
 
         Assert.assertEquals(expectedResultCode, response.getBody().getResponseCode());
         Assert.assertEquals(expectedResultDesc, response.getBody().getResponseDesc());
@@ -98,7 +98,7 @@ public class BankCalculatorTest {
         String expectedResultCode = "1";
         String expectedResultDesc = "Amount less than min amount";
 
-        ResponseEntity<ResponseWrapper> response = bankCalculator.calculateBank(10);
+        ResponseEntity<ResponseWrapper> response = atmController.calculateBank(10);
 
         Assert.assertEquals(expectedResultCode, response.getBody().getResponseCode());
         Assert.assertEquals(expectedResultDesc, response.getBody().getResponseDesc());

@@ -1,6 +1,6 @@
 package com.service;
 
-import com.controller.BankCalculator;
+import com.controller.AtmController;
 import com.exception.InsufficientBalanceException;
 import com.exception.InsufficientNoteException;
 import com.exception.InvalidAmountException;
@@ -14,17 +14,23 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @RestController
-public class DispenseService {
+public class AtmService {
 
     @Autowired
-    BankCalculator bankCalculator;
+    AtmController atmController;
 
     @CrossOrigin(origins = "*", allowCredentials = "true")
     @GetMapping("/dispense")
     public ResponseEntity<ResponseWrapper> deposit(
             @RequestParam("amount") int amount)
             throws InsufficientNoteException, InvalidAmountException, InsufficientBalanceException {
-        return bankCalculator.calculateBank(amount);
+        return atmController.calculateBank(amount);
+    }
+
+    @CrossOrigin(origins = "*", allowCredentials = "true")
+    @GetMapping("/checkBalance")
+    public ResponseEntity<ResponseWrapper> checkBalance() {
+        return atmController.checkBalance();
     }
 
 }
