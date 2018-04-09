@@ -1,6 +1,11 @@
 # ATM Simulator
 This is a Spring Boot project simulating ATM machine's dispensing logic
 
+### About API
+The ATM Simulator provides two services.
+* Dispense service - To dispense money from the ATM Simulator
+* Check balance service - To check current amount of each type of notes the ATM Simulator currently has
+
 ### Technologies
 * [Maven](https://maven.apache.org/) - Software project management
 * [Spring Boot](https://projects.spring.io/spring-boot/) - Quickly create stand-alone, production-grade Spring based Applications
@@ -35,7 +40,7 @@ The project should start on port 8080
 
 ### How to test the API
 Go to [frontend atm-simulator project](https://github.com/Skhwan/atm-simulator-react) and run the frontend side first and use it to test ATM Simulator
-The Website should look like this
+<br/>The Website should look like this
 ![React test-tool website](/src/main/resources/image/test-tool-sample.png?raw=true)
 
 
@@ -47,7 +52,7 @@ You can request dispensing money via [Postman](https://www.getpostman.com) or by
 http://localhost:8080/atm-simulator/dispense?amount=<AMOUNT>
 ```
 while \<AMOUNT\> indicates money you want to dispense from ATM Simulator
-The response should look like
+<br/>The response should look like
 ```
 {
     "responseCode": "0",
@@ -67,8 +72,44 @@ The response should look like
     ]
 }
 ```
-###### Possible API response
-* success
+#### Possible API response
+* Check balance success
+```
+{
+    "responseCode": "0",
+    "responseDesc": "SUCCESS",
+    "responseStatus": "SUCCESS",
+    "responseBody": [
+        {
+            "type": "THOUSAND",
+            "value": 1000,
+            "amount": 20
+        },
+        {
+            "type": "FIVE_HUNDRED",
+            "value": 500,
+            "amount": 20
+        },
+        {
+            "type": "ONE_HUNDRED",
+            "value": 100,
+            "amount": 19
+        },
+        {
+            "type": "FIFTY",
+            "value": 50,
+            "amount": 19
+        },
+        {
+            "type": "TWENTY",
+            "value": 20,
+            "amount": 18
+        }
+    ]
+}
+```
+
+* Dispensing success
 ```
 {
     "responseCode": "0",
@@ -119,9 +160,11 @@ The response should look like
 }
 ```
 
-###### Possible Web response
+#### Possible Web response
 * Please enter dispensed amount - The user doesn't enter amount when clicking dispense button
 * Amount less than min amount - Requested amount is less than minimum amount
 * Remaining balance less than dispensed amount - Total balance of ATM Simulator is less than requested amount
 * Insufficient note number. Try dispensing a different amount. - ATM Simulator doesn't have enough notes needed by requested amount or the simulator cannot find appropriate combination of notes to fulfill requested amount
 * Out of service - The backend server isn't started
+<br/>
+<br/>*Note: Regarding real-life situation, the user shouldn't be allowed to know the amount of note the ATM machine has. So I haven't implemented that services for the website.
